@@ -43,7 +43,7 @@ def get_arguments():
     report_parser = subparser.add_parser("report", help="report command")
     report_parser.add_argument(
         "subcommand",
-        choices=["inventory", "revenue", "profit"],
+        choices=["inventory", "revenue", "profit", "sold"],
         help="Choose which report you want to see",
     )
 
@@ -52,9 +52,12 @@ def get_arguments():
     sell_parser.add_argument(
         "-p", "--product", type=str, help="name of the product you sold"
     )
-    sell_parser.add_argument("-a", "--amount", type=int, help="number of products sold")
+    sell_parser.add_argument("-id", type=int, help="id of the bought product")
     sell_parser.add_argument(
-        "-pr", "--price", type=float, help="provide the price of the product"
+        "-pr", "--sell_price", type=float, help="provide the price of the product"
+    )
+    sell_parser.add_argument(
+        "-d", "--sell_date", help="provide the sell date of the product"
     )
 
     args = parser.parse_args()
@@ -87,18 +90,42 @@ def get_report():
         if args.command == "report" and args.subcommand == "inventory":
             for line in bought_report:
                 print(line)
+    with open("sold.csv", "r") as sold_file:
+        sold_report = csv.reader(sold_file)
+        if args.command == "report" and args.subcommand == "sold":
+            for line in sold_report:
+                print(line)
+
+
+def sell_products():
+    with open("bought.csv", "w") as bought_file:
+        bought_file_writer = csv.writer(bought_file)
+        with open("sold.csv", "a") as sold_file:
+            sold_file_writer = csv.writer(sold_file)
+
+            args = get_arguments()
+            for line in bought_file_writer:
+                if args.command == "sell" and args.id == args.id_buy:
+                    line = " "
+            if args.command == "sell":
+                new_arr_for_sold_csvfile = [
+                    args.id,
+                    args.product,
+                    args.sell_price,
+                    args.sell_date,
+                ]
+                print(new_arr_for_sold_csvfile)
+                sold_file_writer.writerow(new_arr_for_sold_csvfile)
 
 
 # als ik args sell gebruik, moet het product met de desbetreffende id gewist worden in de bought file
 # entoe worden gevoegd aan de sold file
 
-# with open('sold.csv', 'w') as sold_file:
-# sold_writer = csv.writer(sold_file)#, delimiter= '\t'
-
 if __name__ == "__main__":
     main()
     get_arguments()
     get_report()
+    sell_products()
 
     args = get_arguments()
 
