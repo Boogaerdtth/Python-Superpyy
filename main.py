@@ -12,8 +12,6 @@ from datetime import date
 import sys
 from rich.console import Console
 
-myconsole = Console()
-
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -115,7 +113,7 @@ def sell_products():
                     args.sell_date,
                 ]
                 print(new_arr_for_sold_csvfile)
-                sold_file_writer.writerow(new_arr_for_sold_csvfile)
+                # sold_file_writer.writerow(new_arr_for_sold_csvfile)
 
 
 # als ik args sell gebruik, moet het product met de desbetreffende id gewist worden in de bought file
@@ -129,6 +127,7 @@ if __name__ == "__main__":
 
     args = get_arguments()
 
+    myconsole = Console()
     myconsole.print("*" * 30)
     myconsole.print("# Arguments", args)
     myconsole.print("*" * 30)
