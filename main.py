@@ -82,8 +82,8 @@ def main():
 
 
 def get_report():
-    with open("bought.csv", "r") as bought_file:
-        bought_report = csv.reader(bought_file)
+    with open("bought.csv", "r") as f:
+        bought_report = csv.reader(f)
         args = get_arguments()
         if args.command == "report" and args.subcommand == "inventory":
             for line in bought_report:
@@ -96,28 +96,29 @@ def get_report():
 
 
 def sell_products():
-    with open("bought.csv", "w") as bought_file:
-        bought_file_writer = csv.writer(bought_file)
-        with open("sold.csv", "a") as sold_file:
-            sold_file_writer = csv.writer(sold_file)
+    args = get_arguments()
 
-            args = get_arguments()
-            for line in bought_file_writer:
-                if args.command == "sell" and args.id == args.id_buy:
-                    line = " "
-            if args.command == "sell":
-                new_arr_for_sold_csvfile = [
-                    args.id,
-                    args.product,
-                    args.sell_price,
-                    args.sell_date,
-                ]
-                print(new_arr_for_sold_csvfile)
-                # sold_file_writer.writerow(new_arr_for_sold_csvfile)
+    with open("bought.csv", "r") as f:
+        reader = csv.reader(f)
+        for item in reader:
+            if args.command == "sell" and args.id == item[0]:
+                with open("bought.csv", "a") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(" ")
 
 
-# als ik args sell gebruik, moet het product met de desbetreffende id gewist worden in de bought file
-# entoe worden gevoegd aan de sold file
+# with open("sold.csv", "a") as x:
+#     sold_file_writer = csv.writer(x)
+#     if args.command == "sell":
+#         new_arr_for_sold_csvfile = [
+#             args.id,
+#             args.product,
+#             args.sell_price,
+#             args.sell_date,
+#         ]
+#         print(new_arr_for_sold_csvfile)
+# sold_file_writer.writerow(new_arr_for_sold_csvfile)
+
 
 if __name__ == "__main__":
     main()
