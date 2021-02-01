@@ -6,11 +6,13 @@ __human_name__ = "superpy"
 # Your code below this line.
 
 # Imports
+import os
 import argparse
 import csv
 from datetime import date
 import sys
 from rich.console import Console
+import time
 
 
 def get_arguments():
@@ -68,7 +70,10 @@ def main():
         args = get_arguments()
 
         id_buy = id(1)
+        # print(f[2])
+        # id = 0
         if args.command == "buy":
+            # id = id + 1
             new_arr_for_csvfile = [
                 id_buy,
                 args.product,
@@ -77,7 +82,7 @@ def main():
                 args.amount,
                 args.expiration_date,
             ]
-            print(new_arr_for_csvfile)
+            # print(new_arr_for_csvfile)
             bought_writer.writerow(new_arr_for_csvfile)
 
 
@@ -93,31 +98,69 @@ def get_report():
         if args.command == "report" and args.subcommand == "sold":
             for line in sold_report:
                 print(line)
+        if args.command == "report" and args.subcommand == "revenue":
+            next(sold_report)
+            sum_revenue = 0
+            for line in sold_report:
+                sum_revenue += float(line[2])
+                print(sum_revenue)
 
 
 def sell_products():
     args = get_arguments()
 
-    with open("bought.csv", "r") as f:
-        reader = csv.reader(f)
-        for item in reader:
-            if args.command == "sell" and args.id == item[0]:
-                with open("bought.csv", "a") as f:
-                    writer = csv.writer(f)
-                    writer.writerow(" ")
+    with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out, open(
+        "sold.csv", "a"
+    ) as sold:
+        writer = csv.writer(out)
+        for item in csv.reader(inp):
+            if args.command == "sell" and str(args.id) != item[0]:
+                writer.writerow(item)
+                # os.rename("bought_edit.csv", "bought.csv")
+        sold_writer = csv.writer(sold)
+        for item in csv.reader(inp):
+            if args.command == "sell" and str(args.id) == item[0]:
+                arr_for_soldfile = [
+                    args.id,
+                    args.product,
+                    args.sell_price,
+                    args.sell_date,
+                ]
+                print(arr_for_soldfile)
+                sold_writer.writerow(arr_for_soldfile)
+        # os.rename("bought_edit.csv", "bought.csv")
 
 
-# with open("sold.csv", "a") as x:
-#     sold_file_writer = csv.writer(x)
-#     if args.command == "sell":
-#         new_arr_for_sold_csvfile = [
-#             args.id,
-#             args.product,
-#             args.sell_price,
-#             args.sell_date,
-#         ]
-#         print(new_arr_for_sold_csvfile)
-# sold_file_writer.writerow(new_arr_for_sold_csvfile)
+# graag wil ik feedback over wa er fout gaat bij sell_products(). en dan geen hints geven over
+# wat ik zou moeten doen, maar gewoon zeggen wat ik moet coderen. ik weet het niet meer,
+# en ik heb al genoeg vragen gestedl in slack
+
+# als bovenstaande functie uitgevoerd wordt, wordt de bought_edit file overgeschreven.
+# wat niet werkt, is dat het oude bought bestand niet wordt bijgewerkt.
+# en het bijwerken van de sold file doet t ook niet meer
+
+
+# def sell_products():
+#     args = get_arguments()
+
+#     with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out:
+#         writer = csv.writer(out)
+#         for item in csv.reader(inp):
+#             if args.command == "sell" and str(args.id) != item[0]:
+#                 writer.writerow(item)
+#                 os.rename("bought_edit.csv", "bought.csv")
+#                 with open("sold.csv", "a") as sold:
+#                     sold_file_writer = csv.writer(sold)
+#                     for item in csv.reader(inp):
+#                         if args.command == "sell" and str(args.id) == item[0]:
+#                             new_arr_for_sold_csvfile = [
+#                                 args.id,
+#                                 args.product,
+#                                 args.sell_price,
+#                                 args.sell_date,
+#                             ]
+#                             # print(new_arr_for_sold_csvfile)
+#                             sold_file_writer.writerow(new_arr_for_sold_csvfile)
 
 
 if __name__ == "__main__":
