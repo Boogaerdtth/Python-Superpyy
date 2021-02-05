@@ -4,8 +4,6 @@ __human_name__ = "superpy"
 
 
 # Your code below this line.
-
-# Imports
 import os
 import argparse
 import csv
@@ -30,12 +28,6 @@ def get_arguments():
     )
     buy_parser.add_argument(
         "-pr", "--price", type=float, help="provide bought price per item"
-    )
-    buy_parser.add_argument(
-        "-bp",
-        "--buy_price",
-        type=float,
-        help="what was the price that you bought it for",
     )
     buy_parser.add_argument("-ex", "--expiration_date")
 
@@ -82,7 +74,6 @@ def main():
                 args.amount,
                 args.expiration_date,
             ]
-            # print(new_arr_for_csvfile)
             bought_writer.writerow(new_arr_for_csvfile)
 
 
@@ -116,10 +107,9 @@ def sell_products():
         for item in csv.reader(inp):
             if args.command == "sell" and str(args.id) != item[0]:
                 writer.writerow(item)
-                # os.rename("bought_edit.csv", "bought.csv")
-        sold_writer = csv.writer(sold)
-        for item in csv.reader(inp):
-            if args.command == "sell" and str(args.id) == item[0]:
+            elif args.command == "sell" and str(args.id == item[0]):
+                sold_writer = csv.writer(sold)
+
                 arr_for_soldfile = [
                     args.id,
                     args.product,
@@ -128,39 +118,8 @@ def sell_products():
                 ]
                 print(arr_for_soldfile)
                 sold_writer.writerow(arr_for_soldfile)
-        # os.rename("bought_edit.csv", "bought.csv")
-
-
-# graag wil ik feedback over wa er fout gaat bij sell_products(). en dan geen hints geven over
-# wat ik zou moeten doen, maar gewoon zeggen wat ik moet coderen. ik weet het niet meer,
-# en ik heb al genoeg vragen gestedl in slack
-
-# als bovenstaande functie uitgevoerd wordt, wordt de bought_edit file overgeschreven.
-# wat niet werkt, is dat het oude bought bestand niet wordt bijgewerkt.
-# en het bijwerken van de sold file doet t ook niet meer
-
-
-# def sell_products():
-#     args = get_arguments()
-
-#     with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out:
-#         writer = csv.writer(out)
-#         for item in csv.reader(inp):
-#             if args.command == "sell" and str(args.id) != item[0]:
-#                 writer.writerow(item)
-#                 os.rename("bought_edit.csv", "bought.csv")
-#                 with open("sold.csv", "a") as sold:
-#                     sold_file_writer = csv.writer(sold)
-#                     for item in csv.reader(inp):
-#                         if args.command == "sell" and str(args.id) == item[0]:
-#                             new_arr_for_sold_csvfile = [
-#                                 args.id,
-#                                 args.product,
-#                                 args.sell_price,
-#                                 args.sell_date,
-#                             ]
-#                             # print(new_arr_for_sold_csvfile)
-#                             sold_file_writer.writerow(new_arr_for_sold_csvfile)
+                os.remove("bought.csv")
+                os.rename("bought_edit.csv", "bought.csv")
 
 
 if __name__ == "__main__":
