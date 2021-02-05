@@ -7,10 +7,34 @@ __human_name__ = "superpy"
 import os
 import argparse
 import csv
-from datetime import date
 import sys
 from rich.console import Console
-import time
+from datetime import date, timedelta, datetime
+
+today = date.today()
+subtract_one_day = timedelta(days=1)
+subtract_two_days = timedelta(days=2)
+subtract_one_week = timedelta(days=7)
+
+yesterday = today - subtract_one_day
+day_before_yesterday = today - subtract_two_days
+last_week = today - subtract_one_week
+
+# display_date = datetime.strftime(today, "%Y/%m/%d")
+# # print(display_date)
+
+display_yesterday = datetime.strftime(yesterday, "%Y/%m/%d")
+
+# def display_date(date):
+#     return datetime.strftime(date, "%Y-%m-%d")
+
+# print(display_date(today))
+# print(type(display_date(today)))
+
+# def display_date_string(date):
+#     return datetime.strptime(date, "%Y/%m/%d")
+
+# print(display_date_string("2021/02/05"))
 
 
 def get_arguments():
@@ -29,7 +53,7 @@ def get_arguments():
     buy_parser.add_argument(
         "-pr", "--price", type=float, help="provide bought price per item"
     )
-    buy_parser.add_argument("-ex", "--expiration_date")
+    buy_parser.add_argument("-ex", "--expiration_date", type=str)
 
     # REPORT PARSER
     report_parser = subparser.add_parser("report", help="report command")
@@ -37,6 +61,12 @@ def get_arguments():
         "subcommand",
         choices=["inventory", "revenue", "profit", "sold"],
         help="Choose which report you want to see",
+    )
+
+    report_parser.add_argument(
+        "time",
+        choices=["today", "yesterday", "lastweek"],
+        help="if you want to see a report from different days",
     )
 
     # SELL PARSER
@@ -75,15 +105,31 @@ def main():
                 args.expiration_date,
             ]
             bought_writer.writerow(new_arr_for_csvfile)
+            # print(display_date(args.expiration_date))
 
 
 def get_report():
     with open("bought.csv", "r") as f:
         bought_report = csv.reader(f)
         args = get_arguments()
-        if args.command == "report" and args.subcommand == "inventory":
+        if (
+            args.command == "report"
+            and args.subcommand == "inventory"
+            and args.time == "today"
+        ):
             for line in bought_report:
                 print(line)
+        if (
+            args.command == "report"
+            and args.subcommand == "inventory"
+            and args.time == "yesterday"
+        ):
+            next(bought_report)
+            for line in bought_report:
+                if (datetime.strptime(line[3], "%Y/%m/%d")) < datetime.strptime(
+                    display_yesterday, "%Y/%m/%d"
+                ):
+                    print(line)
     with open("sold.csv", "r") as sold_file:
         sold_report = csv.reader(sold_file)
         if args.command == "report" and args.subcommand == "sold":
@@ -94,6 +140,8 @@ def get_report():
             sum_revenue = 0
             for line in sold_report:
                 sum_revenue += float(line[2])
+                # total_revenue = [sum_revenue]
+                # print(total_revenue)
                 print(sum_revenue)
 
 
