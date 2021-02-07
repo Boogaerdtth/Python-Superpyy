@@ -20,39 +20,6 @@ yesterday = today - subtract_one_day
 day_before_yesterday = today - subtract_two_days
 last_week = today - one_week_back_in_time
 
-# week_range = today - one_week_back_in_time
-# print(week_range)
-# print(one_week_back_in_time)
-
-# base = datetime.datetime.today()
-# date_list = [today - one_week_back_in_time for x in range(1)]
-# print(date_list)
-
-# if data < today and > one_week_back_in_time:
-# print line
-
-# display_date = datetime.strftime(today, "%Y/%m/%d")
-# # print(display_date)
-
-# display_yesterday = datetime.strftime(yesterday, "%Y/%m/%d")
-
-# def display_date(date):
-#     return datetime.strftime(date, "%Y-%m-%d")
-
-# print(display_date(today))
-# print(type(display_date(today)))
-
-# def display_date_string(date):
-#     return datetime.strptime(date, "%Y/%m/%d")
-
-# print(display_date_string("2021/02/05"))
-
-
-"""
-ik wil eigenlijk bij argparse lastweek de volledige week naar voren krijgen, en niet alleen maar
-de today - 7 dagen
-"""
-
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -136,6 +103,7 @@ def get_report():
         ):
             for line in bought_report:
                 print(line)
+
         if (
             args.command == "report"
             and args.subcommand == "inventory"
@@ -149,7 +117,6 @@ def get_report():
                 ):
                     print(line)
 
-        # HIER BEN IK!!!
         if (
             args.command == "report"
             and args.subcommand == "inventory"
@@ -158,17 +125,15 @@ def get_report():
             next(bought_report)
             display_last_week = datetime.strftime(last_week, "%d/%m/%Y")
             display_today = datetime.strftime(today, "%d/%m/%Y")
-            print(display_last_week)
-            print(display_today)
 
             for line in bought_report:
-                print(datetime.strptime(line[3], "%d/%m/%Y"))
-    # dit lukt bijna!! alleen onderstaande code nog even converteren naar waardes waarmee ie wel kan rekenen
-    # maandag weer een dag
-    #     if (datetime.strptime(line[3], "%d/%m/%Y")) > display_last_week and (
-    #         datetime.strptime(line[3], "%d/%m/%Y")
-    #     ) < display_today:
-    #         print(line)
+                if (
+                    datetime.strptime(display_last_week, "%d/%m/%Y")
+                    < datetime.strptime(line[3], "%d/%m/%Y")
+                    < datetime.strptime(display_today, "%d/%m/%Y")
+                ):
+                    print(line)
+
     with open("sold.csv", "r") as sold_file:
         sold_report = csv.reader(sold_file)
         if args.command == "report" and args.subcommand == "sold":
