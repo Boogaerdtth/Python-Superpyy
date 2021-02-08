@@ -2,7 +2,6 @@
 __winc_id__ = "a2bc36ea784242e4989deb157d527ba0"
 __human_name__ = "superpy"
 
-
 # Your code below this line.
 import os
 import argparse
@@ -30,12 +29,11 @@ def get_arguments():
     buy_parser.add_argument(
         "-p", "--product", type=str, help="provide name of the product"
     )
-    buy_parser.add_argument("-bd", "--buy_date", help="When did you buy it?")
     buy_parser.add_argument(
         "-a", "--amount", type=int, help="how many items dit you bought"
     )
     buy_parser.add_argument(
-        "-pr", "--price", type=float, help="provide bought price per item"
+        "-bpr", "--buy_price", type=float, help="provide bought price per item"
     )
     buy_parser.add_argument("-ex", "--expiration_date", type=str)
 
@@ -43,10 +41,9 @@ def get_arguments():
     report_parser = subparser.add_parser("report", help="report command")
     report_parser.add_argument(
         "subcommand",
-        choices=["inventory", "revenue", "profit", "sold"],
+        choices=["inventory", "revenue", "profit", "sold", "exdates"],
         help="Choose which report you want to see",
     )
-
     report_parser.add_argument(
         "time",
         choices=["today", "yesterday", "lastweek"],
@@ -60,42 +57,39 @@ def get_arguments():
     )
     sell_parser.add_argument("-id", type=int, help="id of the bought product")
     sell_parser.add_argument(
-        "-pr", "--sell_price", type=float, help="provide the price of the product"
-    )
-    sell_parser.add_argument(
-        "-d", "--sell_date", help="provide the sell date of the product"
+        "-spr", "--sell_price", type=float, help="provide the price of the product"
     )
 
     args = parser.parse_args()
     return args
 
 
+# BUY STOCK
 def main():
     with open("bought.csv", "a") as f:
         bought_writer = csv.writer(f)
         args = get_arguments()
 
         id_buy = id(1)
-        # print(f[2])
-        # id = 0
         if args.command == "buy":
-            # id = id + 1
             new_arr_for_csvfile = [
                 id_buy,
+                today,
                 args.product,
-                args.price,
-                args.buy_date,
+                args.buy_price,
                 args.amount,
                 args.expiration_date,
             ]
             bought_writer.writerow(new_arr_for_csvfile)
-            # print(display_date(args.expiration_date))
 
 
+# GET REPORT
 def get_report():
     with open("bought.csv", "r") as f:
         bought_report = csv.reader(f)
         args = get_arguments()
+
+        # GET INVENTORY TODAY
         if (
             args.command == "report"
             and args.subcommand == "inventory"
@@ -104,6 +98,7 @@ def get_report():
             for line in bought_report:
                 print(line)
 
+        # GET INVENTORY YESTERDAY
         if (
             args.command == "report"
             and args.subcommand == "inventory"
@@ -117,6 +112,7 @@ def get_report():
                 ):
                     print(line)
 
+        # GET INVENTORY FROM LAST WEEK
         if (
             args.command == "report"
             and args.subcommand == "inventory"
@@ -134,21 +130,51 @@ def get_report():
                 ):
                     print(line)
 
+        # GET REPORT WITH EXPIRATION DATES
+        if (
+            args.command == "report"
+            and args.subcommand == "exdates"
+            and args.time == "today"
+        ):
+            next(bought_report)
+            display_yesterday = datetime.strftime(yesterday, "%d-%m-%Y")
+            for line in bought_report:
+                if (datetime.strptime(line[5], "%d-%m-%Y")) < datetime.strptime(
+                    display_yesterday, "%d-%m-%Y"
+                ):
+                    print(line)
+
     with open("sold.csv", "r") as sold_file:
         sold_report = csv.reader(sold_file)
+
+        # GET REPORT WITH SOLD PRODUCTS
         if args.command == "report" and args.subcommand == "sold":
             for line in sold_report:
                 print(line)
+
+        # GET REPORT WITH REVENUE
         if args.command == "report" and args.subcommand == "revenue":
             next(sold_report)
             sum_revenue = 0
             for line in sold_report:
                 sum_revenue += float(line[2])
-                # total_revenue = [sum_revenue]
-                # print(total_revenue)
-                print(sum_revenue)
+            print(sum_revenue)
+
+        # GET REPORT WITH PROFIT
+        if args.command == "report" and args.subcommand == "profit":
+            next(sold_report)
+            sum_profit = 0
+            for line in sold_report:
+                sum_profit += float(line[4])
+            print(sum_profit)
 
 
+"""
+Ik wil dat de winst wordt berekend?
+Hoe zorg ik er voor dat de buy price van de bought_edit file wordt gekopieerd naar de sold
+"""
+
+# SELL PRODUCTS
 def sell_products():
     args = get_arguments()
 
@@ -161,12 +187,16 @@ def sell_products():
                 writer.writerow(item)
             elif args.command == "sell" and str(args.id == item[0]):
                 sold_writer = csv.writer(sold)
+                print(item[3])
+                profit_product = args.sell_price - float(item[3])
+                print(profit_product)
 
                 arr_for_soldfile = [
                     args.id,
+                    today,
                     args.product,
                     args.sell_price,
-                    args.sell_date,
+                    profit_product,
                 ]
                 print(arr_for_soldfile)
                 sold_writer.writerow(arr_for_soldfile)
