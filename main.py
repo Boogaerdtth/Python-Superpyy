@@ -169,11 +169,6 @@ def get_report():
             print(sum_profit)
 
 
-"""
-Ik wil dat de winst wordt berekend?
-Hoe zorg ik er voor dat de buy price van de bought_edit file wordt gekopieerd naar de sold
-"""
-
 # SELL PRODUCTS
 def sell_products():
     args = get_arguments()
