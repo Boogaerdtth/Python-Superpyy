@@ -11,13 +11,22 @@ from rich.console import Console
 from datetime import date, timedelta, datetime
 
 today = date.today()
+display_today = datetime.strftime(today, "%d-%m-%Y")
 subtract_one_day = timedelta(days=1)
 subtract_two_days = timedelta(days=2)
 one_week_back_in_time = timedelta(days=7)
 
 yesterday = today - subtract_one_day
+display_yesterday = datetime.strftime(yesterday, "%d-%m-%Y")
 day_before_yesterday = today - subtract_two_days
 last_week = today - one_week_back_in_time
+
+
+def main():
+    get_arguments()
+    get_report()
+    buy_product()
+    sell_products()
 
 
 def get_arguments():
@@ -30,7 +39,7 @@ def get_arguments():
         "-p", "--product", type=str, help="provide name of the product"
     )
     buy_parser.add_argument(
-        "-a", "--amount", type=int, help="how many items dit you bought"
+        "-a", "--amount", type=int, help="how many items did you bought"
     )
     buy_parser.add_argument(
         "-bpr", "--buy_price", type=float, help="provide bought price per item"
@@ -55,7 +64,7 @@ def get_arguments():
     sell_parser.add_argument(
         "-p", "--product", type=str, help="name of the product you sold"
     )
-    sell_parser.add_argument("-id", type=int, help="id of the bought product")
+    sell_parser.add_argument("-a", "--amount", type=int, help="amount of product")
     sell_parser.add_argument(
         "-spr", "--sell_price", type=float, help="provide the price of the product"
     )
@@ -65,22 +74,40 @@ def get_arguments():
 
 
 # BUY STOCK
-def main():
-    with open("bought.csv", "a") as f:
-        bought_writer = csv.writer(f)
+def buy_product():
+    with open("bought.csv", "r") as inp, open("bought_edit.csv", "a") as out:
+        reader = csv.reader(inp)
+        writer = csv.writer(out)
         args = get_arguments()
-
         id_buy = id(1)
-        if args.command == "buy":
-            new_arr_for_csvfile = [
-                id_buy,
-                today,
-                args.product,
-                args.buy_price,
-                args.amount,
-                args.expiration_date,
-            ]
-            bought_writer.writerow(new_arr_for_csvfile)
+
+        for line in reader:
+            if args.command == "buy" and args.product != line[2]:
+                new_arr_for_csvfile = [
+                    id_buy,
+                    display_today,
+                    args.product,
+                    args.buy_price,
+                    args.amount,
+                    args.expiration_date,
+                ]
+                writer.writerow(new_arr_for_csvfile)
+                # os.remove("bought.csv")
+                # os.rename("bought_edit.csv", "bought.csv")
+
+            elif args.command == "buy" and args.product == line[2]:
+                new_amount = int(args.amount) + int(line[4])
+                new_arr_for_csvfile = [
+                    id_buy,
+                    display_today,
+                    args.product,
+                    args.buy_price,
+                    new_amount,
+                    args.expiration_date,
+                ]
+                writer.writerow(new_arr_for_csvfile)
+            #     os.remove("bought.csv")
+            #     os.rename("bought_edit.csv", "bought.csv")
 
 
 # GET REPORT
@@ -105,10 +132,9 @@ def get_report():
             and args.time == "yesterday"
         ):
             next(bought_report)
-            display_yesterday = datetime.strftime(yesterday, "%d/%m/%Y")
             for line in bought_report:
-                if (datetime.strptime(line[3], "%d/%m/%Y")) < datetime.strptime(
-                    display_yesterday, "%d/%m/%Y"
+                if (datetime.strptime(line[3], "%d-%m-%Y")) < datetime.strptime(
+                    display_yesterday, "%d-%m-%Y"
                 ):
                     print(line)
 
@@ -119,14 +145,13 @@ def get_report():
             and args.time == "lastweek"
         ):
             next(bought_report)
-            display_last_week = datetime.strftime(last_week, "%d/%m/%Y")
-            display_today = datetime.strftime(today, "%d/%m/%Y")
+            display_last_week = datetime.strftime(last_week, "%d-%m-%Y")
 
             for line in bought_report:
                 if (
-                    datetime.strptime(display_last_week, "%d/%m/%Y")
-                    < datetime.strptime(line[3], "%d/%m/%Y")
-                    < datetime.strptime(display_today, "%d/%m/%Y")
+                    datetime.strptime(display_last_week, "%d-%m-%Y")
+                    < datetime.strptime(line[3], "%d-%m-%Y")
+                    < datetime.strptime(display_today, "%d-%m-%Y")
                 ):
                     print(line)
 
@@ -137,7 +162,6 @@ def get_report():
             and args.time == "today"
         ):
             next(bought_report)
-            display_yesterday = datetime.strftime(yesterday, "%d-%m-%Y")
             for line in bought_report:
                 if (datetime.strptime(line[5], "%d-%m-%Y")) < datetime.strptime(
                     display_yesterday, "%d-%m-%Y"
@@ -178,17 +202,25 @@ def sell_products():
     ) as sold:
         writer = csv.writer(out)
         for item in csv.reader(inp):
-            if args.command == "sell" and str(args.id) != item[0]:
-                writer.writerow(item)
-            elif args.command == "sell" and str(args.id == item[0]):
+            if args.command == "sell" and args.product == item[2]:
+                if item[4] > args.amount:
+                    int(item[4]) - int(args.amount)
+                    writer.writerow(item)
+                    print(item)
+                else:
+                    print("Amount is more than we have in stock")
+
+                # if args.command == "sell" and str(args.id) != item[0]:
+                #     writer.writerow(item)
+                # elif args.command == "sell" and str(args.id == item[0]):
                 sold_writer = csv.writer(sold)
-                print(item[3])
+                # print(item[3])
                 profit_product = args.sell_price - float(item[3])
-                print(profit_product)
+                # print(profit_product)
 
                 arr_for_soldfile = [
                     args.id,
-                    today,
+                    display_today,
                     args.product,
                     args.sell_price,
                     profit_product,
@@ -201,12 +233,8 @@ def sell_products():
 
 if __name__ == "__main__":
     main()
-    get_arguments()
-    get_report()
-    sell_products()
 
     args = get_arguments()
-
     myconsole = Console()
     myconsole.print("*" * 30)
     myconsole.print("# Arguments", args)
