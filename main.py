@@ -223,40 +223,55 @@ def get_report():
 # SELL PRODUCTS
 def sell_products():
     args = get_arguments()
-    breakpoint()
 
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out, open(
         "sold.csv", "a"
     ) as sold:
         writer = csv.writer(out)
+        sold_writer = csv.writer(sold)
+
         for item in csv.reader(inp):
-            if args.command == "sell" and args.product == item[2]:
-                if item[4] > args.amount:
-                    int(item[4]) - int(args.amount)
-                    writer.writerow(item)
-                    print(item)
+            id_buy = item[0]
+
+            if args.product == item[2]:
+                if int(item[4]) > args.amount:
+                    new_amount = int(item[4]) - int(args.amount)
+                    profit_product = args.sell_price - float(item[3])
+
+                    new_str_for_csvfile = [
+                        "id_buy",
+                        "buy_date",
+                        "product",
+                        "buy_price",
+                        "amount",
+                        "expiration_date",
+                    ]
+                    new_arr_for_csvfile = [
+                        item[0],
+                        item[1],
+                        item[2],
+                        item[3],
+                        new_amount,
+                        item[5],
+                    ]
+
+                    writer.writerow(new_str_for_csvfile)
+                    writer.writerow(new_arr_for_csvfile)
+
+                    arr_for_soldfile = [
+                        id_buy,
+                        display_today,
+                        args.product,
+                        args.sell_price,
+                        profit_product,
+                    ]
+                    sold_writer.writerow(arr_for_soldfile)
+                    os.remove("bought.csv")
+                    os.rename("bought_edit.csv", "bought.csv")
                 else:
                     print("Amount is more than we have in stock")
-
-                # if args.command == "sell" and str(args.id) != item[0]:
-                #     writer.writerow(item)
-                # elif args.command == "sell" and str(args.id == item[0]):
-                sold_writer = csv.writer(sold)
-                # print(item[3])
-                profit_product = args.sell_price - float(item[3])
-                # print(profit_product)
-
-                arr_for_soldfile = [
-                    args.id,
-                    display_today,
-                    args.product,
-                    args.sell_price,
-                    profit_product,
-                ]
-                print(arr_for_soldfile)
-                sold_writer.writerow(arr_for_soldfile)
-                os.remove("bought.csv")
-                os.rename("bought_edit.csv", "bought.csv")
+            elif args.product != item[2]:
+                print("We're out of stock of this product")
 
 
 if __name__ == "__main__":
