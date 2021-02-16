@@ -86,17 +86,14 @@ def buy_product():
         args = get_arguments()
         id_buy = id(1)
 
-        next(reader)
         for line in reader:
+            if line[0] == "id_buy":
+                next(reader)
+                writer.writerow(line)
+            else:
+                writer.writerow(line)
+
             if args.product != line[2]:
-                new_str_for_csvfile = [
-                    "id_buy",
-                    "buy_date",
-                    "product",
-                    "buy_price",
-                    "amount",
-                    "expiration_date",
-                ]
                 new_arr_for_csvfile = [
                     id_buy,
                     display_today,
@@ -105,24 +102,13 @@ def buy_product():
                     args.amount,
                     args.expiration_date,
                 ]
-
-                writer.writerow(new_str_for_csvfile)
                 writer.writerow(new_arr_for_csvfile)
-                os.remove("bought.csv")
                 os.rename("bought_edit.csv", "bought.csv")
 
             elif args.product == line[2]:
 
                 new_amount = int(args.amount) + int(line[4])
-                new_str_for_csvfile = [
-                    "id_buy",
-                    "buy_date",
-                    "product",
-                    "buy_price",
-                    "amount",
-                    "expiration_date",
-                ]
-                new_arr_for_csvfile = [
+                new_amount_arr_for_csvfile = [
                     id_buy,
                     display_today,
                     args.product,
@@ -130,10 +116,7 @@ def buy_product():
                     new_amount,
                     args.expiration_date,
                 ]
-
-                writer.writerow(new_str_for_csvfile)
-                writer.writerow(new_arr_for_csvfile)
-                os.remove("bought.csv")
+                writer.writerow(new_amount_arr_for_csvfile)
                 os.rename("bought_edit.csv", "bought.csv")
 
 
