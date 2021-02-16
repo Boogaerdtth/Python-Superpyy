@@ -23,10 +23,13 @@ last_week = today - one_week_back_in_time
 
 
 def main():
-    get_arguments()
-    get_report()
-    buy_product()
-    sell_products()
+    args = get_arguments()
+    if args.command == "report":
+        get_report()
+    elif args.command == "buy":
+        buy_product()
+    elif args.command == "sell":
+        sell_products()
 
 
 def get_arguments():
@@ -73,6 +76,8 @@ def get_arguments():
     return args
 
 
+# Hij geeft nog steeds telkens maar 1 product terug!! hij moet appenden en niet writen. wat gaat hier fout???
+
 # BUY STOCK
 def buy_product():
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "a") as out:
@@ -81,8 +86,17 @@ def buy_product():
         args = get_arguments()
         id_buy = id(1)
 
+        next(reader)
         for line in reader:
-            if args.command == "buy" and args.product != line[2]:
+            if args.product != line[2]:
+                new_str_for_csvfile = [
+                    "id_buy",
+                    "buy_date",
+                    "product",
+                    "buy_price",
+                    "amount",
+                    "expiration_date",
+                ]
                 new_arr_for_csvfile = [
                     id_buy,
                     display_today,
@@ -91,12 +105,23 @@ def buy_product():
                     args.amount,
                     args.expiration_date,
                 ]
-                writer.writerow(new_arr_for_csvfile)
-                # os.remove("bought.csv")
-                # os.rename("bought_edit.csv", "bought.csv")
 
-            elif args.command == "buy" and args.product == line[2]:
+                writer.writerow(new_str_for_csvfile)
+                writer.writerow(new_arr_for_csvfile)
+                os.remove("bought.csv")
+                os.rename("bought_edit.csv", "bought.csv")
+
+            elif args.product == line[2]:
+
                 new_amount = int(args.amount) + int(line[4])
+                new_str_for_csvfile = [
+                    "id_buy",
+                    "buy_date",
+                    "product",
+                    "buy_price",
+                    "amount",
+                    "expiration_date",
+                ]
                 new_arr_for_csvfile = [
                     id_buy,
                     display_today,
@@ -105,9 +130,11 @@ def buy_product():
                     new_amount,
                     args.expiration_date,
                 ]
+
+                writer.writerow(new_str_for_csvfile)
                 writer.writerow(new_arr_for_csvfile)
-            #     os.remove("bought.csv")
-            #     os.rename("bought_edit.csv", "bought.csv")
+                os.remove("bought.csv")
+                os.rename("bought_edit.csv", "bought.csv")
 
 
 # GET REPORT
@@ -196,6 +223,7 @@ def get_report():
 # SELL PRODUCTS
 def sell_products():
     args = get_arguments()
+    breakpoint()
 
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out, open(
         "sold.csv", "a"
