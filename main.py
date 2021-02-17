@@ -76,8 +76,6 @@ def get_arguments():
     return args
 
 
-# Hij geeft nog steeds telkens maar 1 product terug!! hij moet appenden en niet writen. wat gaat hier fout???
-
 # BUY STOCK
 def buy_product():
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "a") as out:
