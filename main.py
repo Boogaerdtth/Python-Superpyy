@@ -87,12 +87,6 @@ def buy_product():
         id_buy = id(1)
 
         for line in reader:
-            if line[0] == "id_buy":
-                next(reader)
-                writer.writerow(line)
-            else:
-                writer.writerow(line)
-
             if args.product != line[2]:
                 new_arr_for_csvfile = [
                     id_buy,
@@ -102,11 +96,12 @@ def buy_product():
                     args.amount,
                     args.expiration_date,
                 ]
+                writer.writerow(line)
                 writer.writerow(new_arr_for_csvfile)
-                os.rename("bought_edit.csv", "bought.csv")
+                # try:
+                # os.rename("bought_edit.csv", "bought.csv")
 
             elif args.product == line[2]:
-
                 new_amount = int(args.amount) + int(line[4])
                 new_amount_arr_for_csvfile = [
                     id_buy,
@@ -116,8 +111,12 @@ def buy_product():
                     new_amount,
                     args.expiration_date,
                 ]
+                if line[2] != args.product:
+                    writer.writerow(line)
+
                 writer.writerow(new_amount_arr_for_csvfile)
-                os.rename("bought_edit.csv", "bought.csv")
+                # try:
+                # os.rename("bought_edit.csv", "bought.csv")
 
 
 # GET REPORT
@@ -206,7 +205,7 @@ def get_report():
 # SELL PRODUCTS
 def sell_products():
     args = get_arguments()
-
+    breakpoint()
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out, open(
         "sold.csv", "a"
     ) as sold:

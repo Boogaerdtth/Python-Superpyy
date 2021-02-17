@@ -1,2 +1,3 @@
-id_buy,buy_date, product, buy_price, amount, expiration_date
-4312619312,16-02-2021,pork,1.25,200,15-03-2021
+id_buy, buy_date, 
+4388718896,17-02-2021,pork,1.25,200,15-03-2021
+4435274032,17-02-2021,pasta,1.25,200,15-03-2021
