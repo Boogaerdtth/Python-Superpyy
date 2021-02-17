@@ -39,7 +39,7 @@ def get_arguments():
     # BUY PARSER
     buy_parser = subparser.add_parser("buy", help="add products that you bought")
     buy_parser.add_argument(
-        "-p", "--product", type=str, help="provide name of the product"
+        "-p", "--product", type=str.lower, help="provide name of the product"
     )
     buy_parser.add_argument(
         "-a", "--amount", type=int, help="how many items did you bought"
@@ -65,7 +65,7 @@ def get_arguments():
     # SELL PARSER
     sell_parser = subparser.add_parser("sell", help="add products that you sold")
     sell_parser.add_argument(
-        "-p", "--product", type=str, help="name of the product you sold"
+        "-p", "--product", type=str.lower, help="name of the product you sold"
     )
     sell_parser.add_argument("-a", "--amount", type=int, help="amount of product")
     sell_parser.add_argument(
@@ -82,6 +82,7 @@ def buy_product():
         reader = csv.reader(inp)
         writer = csv.writer(out)
         args = get_arguments()
+        # product = args.product.lower()
         id_buy = id(1)
 
         isAdded = False
@@ -208,6 +209,9 @@ def get_report():
                 sum_profit += float(line[4])
             print(sum_profit)
 
+
+# Ik moet de sell functie hetzelfde inrichten als de buy functie. het is vergelijkbaar,
+# alleen het overzetten naar de sold file is anders
 
 # SELL PRODUCTS
 def sell_products():
