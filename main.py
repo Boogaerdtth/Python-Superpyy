@@ -29,7 +29,7 @@ def main():
     elif args.command == "buy":
         buy_product()
     elif args.command == "sell":
-        sell_products()
+        sell_product()
 
 
 def get_arguments():
@@ -58,9 +58,10 @@ def get_arguments():
     )
     report_parser.add_argument(
         "time",
-        choices=["today", "yesterday", "lastweek"],
+        choices=["today", "yesterday", "lastweek", "date"],
         help="if you want to see a report from different days",
     )
+    report_parser.add_argument("-d", "--date", type=str, help="provide date for report")
 
     # SELL PARSER
     sell_parser = subparser.add_parser("sell", help="add products that you sold")
@@ -127,7 +128,7 @@ def buy_product():
 
 
 # SELL PRODUCTS
-def sell_products():
+def sell_product():
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out, open(
         "sold.csv", "a"
     ) as sold:
@@ -141,9 +142,12 @@ def sell_products():
             id_buy = line[0]
 
             if args.product == line[2]:
+                print(args.amount)
                 if int(line[4]) >= args.amount:
                     new_amount = int(line[4]) - int(args.amount)
-                    profit_product = args.sell_price - float(line[3])
+                    profit_product = (args.sell_price - float(line[3])) * int(
+                        args.amount
+                    )
 
                     new_amount_arr_for_csvfile = [
                         line[0],
@@ -193,20 +197,12 @@ def get_report():
         args = get_arguments()
 
         # GET INVENTORY TODAY
-        if (
-            args.command == "report"
-            and args.subcommand == "inventory"
-            and args.time == "today"
-        ):
+        if args.subcommand == "inventory" and args.time == "today":
             for line in bought_report:
                 print(line)
 
         # GET INVENTORY YESTERDAY
-        if (
-            args.command == "report"
-            and args.subcommand == "inventory"
-            and args.time == "yesterday"
-        ):
+        if args.subcommand == "inventory" and args.time == "yesterday":
             next(bought_report)
             for line in bought_report:
                 if (datetime.strptime(line[3], "%d-%m-%Y")) < datetime.strptime(
@@ -215,11 +211,7 @@ def get_report():
                     print(line)
 
         # GET INVENTORY FROM LAST WEEK
-        if (
-            args.command == "report"
-            and args.subcommand == "inventory"
-            and args.time == "lastweek"
-        ):
+        if args.subcommand == "inventory" and args.time == "lastweek":
             next(bought_report)
             display_last_week = datetime.strftime(last_week, "%d-%m-%Y")
 
@@ -231,12 +223,17 @@ def get_report():
                 ):
                     print(line)
 
+        # GET INVENTORY ON SPECIFIC DATES
+        if args.subcommand == "inventory" and args.time == "date":
+            next(bought_report)
+            display_date = datetime.strptime(args.date, "%d-%m-%Y")
+
+            for line in bought_report:
+                if (datetime.strptime(line[1], "%d-%m-%Y")) < display_date:
+                    print(line)
+
         # GET REPORT WITH EXPIRATION DATES
-        if (
-            args.command == "report"
-            and args.subcommand == "exdates"
-            and args.time == "today"
-        ):
+        if args.subcommand == "exdates" and args.time == "today":
             next(bought_report)
             for line in bought_report:
                 if (datetime.strptime(line[5], "%d-%m-%Y")) < datetime.strptime(
@@ -248,12 +245,12 @@ def get_report():
         sold_report = csv.reader(sold_file)
 
         # GET REPORT WITH SOLD PRODUCTS
-        if args.command == "report" and args.subcommand == "sold":
+        if args.subcommand == "sold":
             for line in sold_report:
                 print(line)
 
         # GET REPORT WITH REVENUE
-        if args.command == "report" and args.subcommand == "revenue":
+        if args.subcommand == "revenue":
             next(sold_report)
             sum_revenue = 0
             for line in sold_report:
@@ -261,7 +258,7 @@ def get_report():
             print(sum_revenue)
 
         # GET REPORT WITH PROFIT
-        if args.command == "report" and args.subcommand == "profit":
+        if args.subcommand == "profit":
             next(sold_report)
             sum_profit = 0
             for line in sold_report:
