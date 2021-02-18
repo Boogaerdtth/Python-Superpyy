@@ -10,6 +10,8 @@ import sys
 from rich.console import Console
 from datetime import date, timedelta, datetime
 
+# from prettytable import PrettyTable
+
 today = date.today()
 display_today = datetime.strftime(today, "%d-%m-%Y")
 subtract_one_day = timedelta(days=1)
@@ -24,6 +26,9 @@ last_week = today - one_week_back_in_time
 
 def main():
     args = get_arguments()
+    # myTable = PrettyTable(
+    #     ["Buy ID", "Buy Date", "Product", "Buy Price", "Amount", "Expiration Date"]
+    # )
     if args.command == "report":
         get_report()
     elif args.command == "buy":
