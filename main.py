@@ -62,6 +62,9 @@ def get_arguments():
         help="if you want to see a report from different days",
     )
     report_parser.add_argument("-d", "--date", type=str, help="provide date for report")
+    report_parser.add_argument(
+        "-f", "--file", type=str, help="export report to new file"
+    )
 
     # SELL PARSER
     sell_parser = subparser.add_parser("sell", help="add products that you sold")
@@ -192,23 +195,30 @@ def sell_product():
 
 # GET REPORT
 def get_report():
-    with open("bought.csv", "r") as f:
+    with open("bought.csv", "r") as f, open("report.csv", "w") as file_writer:
         bought_report = csv.reader(f)
+        new_csv_file = csv.writer(file_writer)
         args = get_arguments()
 
         # GET INVENTORY TODAY
         if args.subcommand == "inventory" and args.time == "today":
             for line in bought_report:
-                print(line)
+                if args.file == "true":
+                    new_csv_file.writerow(line)
+                else:
+                    print(line)
 
         # GET INVENTORY YESTERDAY
         if args.subcommand == "inventory" and args.time == "yesterday":
             next(bought_report)
             for line in bought_report:
-                if (datetime.strptime(line[3], "%d-%m-%Y")) < datetime.strptime(
+                if (datetime.strptime(line[1], "%d-%m-%Y")) < datetime.strptime(
                     display_yesterday, "%d-%m-%Y"
                 ):
-                    print(line)
+                    if args.file == "true":
+                        new_csv_file.writerow(line)
+                    else:
+                        print(line)
 
         # GET INVENTORY FROM LAST WEEK
         if args.subcommand == "inventory" and args.time == "lastweek":
@@ -218,10 +228,13 @@ def get_report():
             for line in bought_report:
                 if (
                     datetime.strptime(display_last_week, "%d-%m-%Y")
-                    < datetime.strptime(line[3], "%d-%m-%Y")
+                    < datetime.strptime(line[1], "%d-%m-%Y")
                     < datetime.strptime(display_today, "%d-%m-%Y")
                 ):
-                    print(line)
+                    if args.file == "true":
+                        new_csv_file.writerow(line)
+                    else:
+                        print(line)
 
         # GET INVENTORY ON SPECIFIC DATES
         if args.subcommand == "inventory" and args.time == "date":
@@ -230,7 +243,10 @@ def get_report():
 
             for line in bought_report:
                 if (datetime.strptime(line[1], "%d-%m-%Y")) < display_date:
-                    print(line)
+                    if args.file == "true":
+                        new_csv_file.writerow(line)
+                    else:
+                        print(line)
 
         # GET REPORT WITH EXPIRATION DATES
         if args.subcommand == "exdates" and args.time == "today":
@@ -239,7 +255,10 @@ def get_report():
                 if (datetime.strptime(line[5], "%d-%m-%Y")) < datetime.strptime(
                     display_yesterday, "%d-%m-%Y"
                 ):
-                    print(line)
+                    if args.file == "true":
+                        new_csv_file.writerow(line)
+                    else:
+                        print(line)
 
     with open("sold.csv", "r") as sold_file:
         sold_report = csv.reader(sold_file)
@@ -247,7 +266,10 @@ def get_report():
         # GET REPORT WITH SOLD PRODUCTS
         if args.subcommand == "sold":
             for line in sold_report:
-                print(line)
+                if args.file == "true":
+                    new_csv_file.writerow(line)
+                else:
+                    print(line)
 
         # GET REPORT WITH REVENUE
         if args.subcommand == "revenue":
