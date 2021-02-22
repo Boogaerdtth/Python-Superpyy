@@ -268,6 +268,17 @@ def get_report(args):
                     else:
                         print(line)
 
+        # GET REPORT WITH EXPIRATION DATES ON SPECIFIC DATES
+        if args.subcommand == "exdates" and args.time == "date":
+            display_date = datetime.strptime(args.date, "%d-%m-%Y")
+            next(bought_report)
+            for line in bought_report:
+                if (datetime.strptime(line[5], "%d-%m-%Y")) <= display_date:
+                    if args.file == "true":
+                        new_csv_file.writerow(line)
+                    else:
+                        print(line)
+
     with open("sold.csv", "r") as sold_file:
         sold_report = csv.reader(sold_file)
 

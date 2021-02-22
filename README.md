@@ -102,7 +102,7 @@ This will add the appels to the bought file
 >```
 > main.py report inventory today
 >
->['id_buy', 'buy_date', 'product', 'buy_price', 'amount', 'expiration_date']
+>['ID', '        Date', '     Product', 'Price', 'Amount', 'Expiration Date']
 >['4354693424', '17-02-2021', 'pork', '1.25', '1500', '15-03-2021']
 >['4471408944', '22-02-2021', 'apple', '2.0', '200', '01-04-2021']
 >['4310575408', '18-02-2021', 'pasta', '1.25', '500', '15-02-2021']
