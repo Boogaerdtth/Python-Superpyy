@@ -36,7 +36,8 @@ First we can get the help menu:
 >  -h, --help         show this help message and exit
 >```
 
-We can also get the help menu for the three positional arguments:
+#### We can also get the help menu for the three positional arguments:
+
 The Buy-argument:
 >```
 >usage: main.py buy [-h] [-p PRODUCT] [-a AMOUNT] [-bpr BUY_PRICE] [-ex EXPIRATION_DATE]
@@ -86,35 +87,48 @@ And the Report-argument:
 ---
 ### Okay,let's get started 
 ---
-To buy a product you can type in your CLI:
+##### To buy a product you can type in your CLI:
 >```
 > main.py buy -p apple -bpr 1.50 -a 200 -ex 01-04-2021
 >```
 This will add the appels to the bought file
 
-To sell a product you can type in your CLI:
+##### To sell a product you can type in your CLI:
 >```
 > main.py sell -p apple -spr 2 -a 100 
 >```
 
-To get reports you can type in your CLI:
+##### To get reports you can type in your CLI:
 >```
 > main.py report inventory today
-
+>
+>['id_buy', 'buy_date', 'product', 'buy_price', 'amount', 'expiration_date']
+>['4354693424', '17-02-2021', 'pork', '1.25', '1500', '15-03-2021']
+>['4471408944', '22-02-2021', 'apple', '2.0', '200', '01-04-2021']
+>['4310575408', '18-02-2021', 'pasta', '1.25', '500', '15-02-2021']
+>
 > main.py report inventory yesterday
-
+>
 > main.py report inventory date -d 25-02-2021
-
+>
 > main.py report revenue today
-
-> main.py report revenue date -d 25-02-2021
-
+>
+> main.py report revenue date -d 25-02-2021 
+>
 > main.py report profit lastweek
-
+>
 > main.py report profit date -d 25-02-2021
-
+>
 > main.py report exdates today
-
+>
 > main.py report exdates date -d 25-02-2021
+>
+>```
+
+##### To make files of the Information you asked for
 
 >```
+> main.py report profit date -d 25-02-2021 -f
+>```
+
+Add -f to your arguments and the output of the CLI will be exported to a new .csv file

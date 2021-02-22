@@ -331,10 +331,12 @@ def get_report(args):
 
 
 if __name__ == "__main__":
+    myconsole = Console()
+    myconsole.print("*" * 80)
+
     args = get_arguments()
     main(args)
 
-    myconsole = Console()
-    myconsole.print("*" * 30)
+    myconsole.print("*" * 80)
     myconsole.print("# Arguments", args)
-    myconsole.print("*" * 30)
+    myconsole.print("*" * 80)

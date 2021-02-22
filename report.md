@@ -21,4 +21,12 @@ create working functions.
 ### CSV module
 Before this assignment I didn't know what a .csv file was. I also didn't know that you could open, write and read files with Python. 
 
-Let's just say that I learnt a lot last couple of weeks. It was a good exercise
+### Table module
+This is where it got interesting. I couldn't find good documentation how to simply add nice looking tables in the CLI. Only after explanation from someone from the education, I finally managed to add some nice tables.
+
+### Endless possibilities
+I also had a hard time with all the different usecases in which you have to account for in your application. Number of things could go wrong, so I had to think of a lot of possibilities what could go wrong.
+
+
+
+Let's just say that I learnt a lot last couple of weeks. It was a good exercise.
