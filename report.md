@@ -27,6 +27,8 @@ This is where it got interesting. I couldn't find good documentation how to simp
 ### Endless possibilities
 I also had a hard time with all the different usecases in which you have to account for in your application. Number of things could go wrong, so I had to think of a lot of possibilities what could go wrong.
 
-
-
 Let's just say that I learnt a lot last couple of weeks. It was a good exercise.
+
+ID,        Date,     Product,Price,Amount,Expiration Date
+
+bought_id,sell_date, product,amount,sell_price,profit
