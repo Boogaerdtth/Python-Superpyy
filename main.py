@@ -24,17 +24,17 @@ day_before_yesterday = today - subtract_two_days
 last_week = today - one_week_back_in_time
 
 
-def main():
+def main(args):
     args = get_arguments()
     # myTable = PrettyTable(
     #     ["Buy ID", "Buy Date", "Product", "Buy Price", "Amount", "Expiration Date"]
     # )
     if args.command == "report":
-        get_report()
+        get_report(args)
     elif args.command == "buy":
-        buy_product()
+        buy_product(args)
     elif args.command == "sell":
-        sell_product()
+        sell_product(args)
 
 
 def get_arguments():
@@ -47,7 +47,7 @@ def get_arguments():
         "-p", "--product", type=str.lower, help="provide name of the product"
     )
     buy_parser.add_argument(
-        "-a", "--amount", type=int, help="how many items did you bought"
+        "-a", "--amount", type=int, help="how many items did you buy"
     )
     buy_parser.add_argument(
         "-bpr", "--buy_price", type=float, help="provide bought price per item"
@@ -64,9 +64,14 @@ def get_arguments():
     report_parser.add_argument(
         "time",
         choices=["today", "yesterday", "lastweek", "date"],
-        help="if you want to see a report from different days",
+        help="if you want to see a report from different days.",
     )
-    report_parser.add_argument("-d", "--date", type=str, help="provide date for report")
+    report_parser.add_argument(
+        "-d",
+        "--date",
+        type=str,
+        help="provide date for report. First type 'date' from the time argument. then type -d and the date as dd-mm-yyyy. For example: report inventory date -d 01-03-2021",
+    )
     report_parser.add_argument(
         "-f", "--file", type=str, help="export report to new file"
     )
@@ -86,15 +91,15 @@ def get_arguments():
 
 
 # BUY STOCK
-def buy_product():
+def buy_product(args):
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "a") as out:
         reader = csv.reader(inp)
         writer = csv.writer(out)
-        args = get_arguments()
         id_buy = id(1)
 
         isAdded = False
         for line in reader:
+            # IF PRODUCT IS ALREADY IN STOCK
             if args.product == line[2]:
                 new_amount = int(args.amount) + int(line[4])
                 new_amount_arr_for_csvfile = [
@@ -111,7 +116,7 @@ def buy_product():
                     os.rename("bought_edit.csv", "bought.csv")
                 except:
                     None
-
+            # IF PRODUCT IS NOT EQUAL TO LINE IN FILE. JUST COPY THE LINE
             else:
                 writer.writerow(line)
                 try:
@@ -119,6 +124,7 @@ def buy_product():
                 except:
                     None
 
+        # IF PRODUCT IS NOT STOCK, ADD PRODUCT TO FILE
         if not isAdded:
             new_arr_for_csvfile = [
                 id_buy,
@@ -136,27 +142,25 @@ def buy_product():
 
 
 # SELL PRODUCTS
-def sell_product():
+def sell_product(args):
     with open("bought.csv", "r") as inp, open("bought_edit.csv", "w") as out, open(
         "sold.csv", "a"
     ) as sold:
         reader = csv.reader(inp)
         writer = csv.writer(out)
         sold_writer = csv.writer(sold)
-        args = get_arguments()
         isAdded = False
 
         for line in reader:
             id_buy = line[0]
-
+            # IF PRODUCT IS IN STOCK. ADD UPDATED AMOUNT
             if args.product == line[2]:
-                print(args.amount)
                 if int(line[4]) >= args.amount:
                     new_amount = int(line[4]) - int(args.amount)
                     profit_product = (args.sell_price - float(line[3])) * int(
                         args.amount
                     )
-
+                    # NEW LIST WITH UPDATED AMOUNT
                     new_amount_arr_for_csvfile = [
                         line[0],
                         line[1],
@@ -171,7 +175,7 @@ def sell_product():
                         None
                     else:
                         writer.writerow(new_amount_arr_for_csvfile)
-
+                    # MAKE NEW LIST FOR SOLD FILE
                     arr_for_soldfile = [
                         id_buy,
                         display_today,
@@ -199,11 +203,10 @@ def sell_product():
 
 
 # GET REPORT
-def get_report():
+def get_report(args):
     with open("bought.csv", "r") as f, open("report.csv", "w") as file_writer:
         bought_report = csv.reader(f)
         new_csv_file = csv.writer(file_writer)
-        args = get_arguments()
 
         # GET INVENTORY TODAY
         if args.subcommand == "inventory" and args.time == "today":
@@ -247,7 +250,7 @@ def get_report():
             display_date = datetime.strptime(args.date, "%d-%m-%Y")
 
             for line in bought_report:
-                if (datetime.strptime(line[1], "%d-%m-%Y")) < display_date:
+                if (datetime.strptime(line[1], "%d-%m-%Y")) <= display_date:
                     if args.file == "true":
                         new_csv_file.writerow(line)
                     else:
@@ -257,7 +260,7 @@ def get_report():
         if args.subcommand == "exdates" and args.time == "today":
             next(bought_report)
             for line in bought_report:
-                if (datetime.strptime(line[5], "%d-%m-%Y")) < datetime.strptime(
+                if (datetime.strptime(line[5], "%d-%m-%Y")) <= datetime.strptime(
                     display_yesterday, "%d-%m-%Y"
                 ):
                     if args.file == "true":
@@ -277,26 +280,60 @@ def get_report():
                     print(line)
 
         # GET REPORT WITH REVENUE
-        if args.subcommand == "revenue":
+        if args.subcommand == "revenue" and args.time == "today":
             next(sold_report)
             sum_revenue = 0
             for line in sold_report:
-                sum_revenue += float(line[2])
-            print(sum_revenue)
+                total_revenue_per_product = float(line[3]) * float(line[4])
+                sum_revenue += total_revenue_per_product
+                if args.file == "true":
+                    new_csv_file.writerow(sum_revenue)
+                else:
+                    print(sum_revenue)
+
+        # GET REPORT WITH REVENUE ON SPECIFIC DATES
+        if args.subcommand == "revenue" and args.time == "date":
+            display_date = datetime.strptime(args.date, "%d-%m-%Y")
+            next(sold_report)
+            sum_revenue = 0
+            for line in sold_report:
+                if (datetime.strptime(line[1], "%d-%m-%Y")) <= display_date:
+                    total_revenue_per_product = float(line[3]) * float(line[4])
+                    sum_revenue += total_revenue_per_product
+                    if args.file == "true":
+                        new_csv_file.writerow(sum_revenue)
+                    else:
+                        print(sum_revenue)
 
         # GET REPORT WITH PROFIT
-        if args.subcommand == "profit":
+        if args.subcommand == "profit" and args.time == "today":
             next(sold_report)
             sum_profit = 0
             for line in sold_report:
-                sum_profit += float(line[4])
-            print(sum_profit)
+                sum_profit += float(line[5])
+                if args.file == "true":
+                    new_csv_file.writerow(sum_profit)
+                else:
+                    print(sum_profit)
+
+        # GET REPORT WITH PROFIT ON SPECIFIC DATES
+        if args.subcommand == "profit" and args.time == "date":
+            display_date = datetime.strptime(args.date, "%d-%m-%Y")
+            next(sold_report)
+            sum_profit = 0
+            for line in sold_report:
+                if (datetime.strptime(line[1], "%d-%m-%Y")) <= display_date:
+                    sum_profit += float(line[5])
+                    if args.file == "true":
+                        new_csv_file.writerow(sum_profit)
+                    else:
+                        print(sum_profit)
 
 
 if __name__ == "__main__":
-    main()
-
     args = get_arguments()
+    main(args)
+
     myconsole = Console()
     myconsole.print("*" * 30)
     myconsole.print("# Arguments", args)
