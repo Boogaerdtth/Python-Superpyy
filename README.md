@@ -22,7 +22,7 @@ These are the things you can do with this tool:
 ---
 ### Getting started
 ---
-First we can get the help menu
+First we can get the help menu:
 >```
 >usage: main.py -h 
 >
@@ -34,11 +34,11 @@ First we can get the help menu
 >
 >optional arguments:
 >  -h, --help         show this help message and exit
-```
+>```
 
 We can also get the help menu for the three positional arguments:
 The Buy-argument:
-```
+>```
 >usage: main.py buy [-h] [-p PRODUCT] [-a AMOUNT] [-bpr BUY_PRICE] [-ex EXPIRATION_DATE]
 >
 >optional arguments:
@@ -50,10 +50,10 @@ The Buy-argument:
 >  -bpr BUY_PRICE, --buy_price BUY_PRICE
 >                        provide bought price per item
 >  -ex EXPIRATION_DATE, --expiration_date EXPIRATION_DATE
-```
+>```
 
 The Sell-argument:
-```
+>```
 >usage: main.py sell [-h] [-p PRODUCT] [-a AMOUNT] [-spr SELL_PRICE]
 >
 >optional arguments:
@@ -64,10 +64,10 @@ The Sell-argument:
 >                        amount of product
 >  -spr SELL_PRICE, --sell_price SELL_PRICE
 >                        provide the price of the product
-```
+>```
 
 And the Report-argument:
-```
+>```
 >usage: main.py report [-h] [-d DATE] [-f FILE]
 >                      {inventory,revenue,profit,sold,exdates} {today,yesterday,lastweek,date}
 >
@@ -82,23 +82,23 @@ And the Report-argument:
 >  -d DATE, --date DATE  provide date for report. First type 'date' from the time argument. then type -d and the
 >                        date as dd-mm-yyyy. For example: report inventory date -d 01-03-2021
 >  -f FILE, --file FILE  export report to new file
-```
+>```
 ---
 ### Okay,let's get started 
 ---
 To buy a product you can type in your CLI:
-```
+>```
 > main.py buy -p apple -bpr 1.50 -a 200 -ex 01-04-2021
-```
+>```
 This will add the appels to the bought file
 
 To sell a product you can type in your CLI:
-```
+>```
 > main.py sell -p apple -spr 2 -a 100 
-```
+>```
 
 To get reports you can type in your CLI:
-```
+>```
 > main.py report inventory today
 
 > main.py report inventory yesterday
@@ -117,4 +117,4 @@ To get reports you can type in your CLI:
 
 > main.py report exdates date -d 25-02-2021
 
-```
+>```
