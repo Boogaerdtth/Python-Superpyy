@@ -21,7 +21,6 @@ def buy_product(args):
                 # IF THE ARGUMENT DATE HAS BEEN GIVEN, YOU WANT TO PURCHASE SOMETHING ON A
                 # DIFFERENT DATE THAN TODAY
 
-                # hieronder gaat het fout
                 if args.date == None:
                     new_amount_arr_for_csvfile = [
                         id_buy,
@@ -34,7 +33,7 @@ def buy_product(args):
                     isAdded = True
                     writer.writerow(new_amount_arr_for_csvfile)
 
-                elif args.date == str:
+                elif len(args.date) > 2:
                     new_amount_and_date_arr_for_csvfile = [
                         id_buy,
                         args.date,
@@ -43,11 +42,13 @@ def buy_product(args):
                         new_amount,
                         args.expiration_date,
                     ]
-                    writer.writerow(new_amount_and_date_arr_for_csvfile)
-                    try:
-                        os.rename("bought_edit.csv", "bought.csv")
-                    except:
-                        None
+                    isAdded = True
+
+                writer.writerow(new_amount_and_date_arr_for_csvfile)
+                try:
+                    os.rename("bought_edit.csv", "bought.csv")
+                except:
+                    None
             # IF PRODUCT IS NOT EQUAL TO LINE IN FILE. JUST COPY THE LINE
             else:
                 writer.writerow(line)
@@ -58,7 +59,6 @@ def buy_product(args):
 
         # IF PRODUCT IS NOT STOCK, ADD PRODUCT TO FILE
         if not isAdded:
-            # hieronder gaat het fout
             if args.date == None:
                 new_arr_for_csvfile = [
                     id_buy,
@@ -69,7 +69,7 @@ def buy_product(args):
                     args.expiration_date,
                 ]
                 writer.writerow(new_arr_for_csvfile)
-            elif args.date == str:
+            elif len(args.date) > 2:
                 new_amount_and_date_arr_for_csvfile = [
                     id_buy,
                     args.date,

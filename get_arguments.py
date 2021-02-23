@@ -43,7 +43,10 @@ def get_arguments():
         help="provide date for report. First type 'date' from the time argument. then type -d and the date as dd-mm-yyyy. For example: report inventory date -d 01-03-2021",
     )
     report_parser.add_argument(
-        "-f", "--file", type=str, help="export report to new file"
+        "-f", "--file", type=str, help="export report to new file. example: -f true"
+    )
+    report_parser.add_argument(
+        "-pdf", "--pdf", type=str, help="export report to new file. example: -pdf true"
     )
 
     # SELL PARSER

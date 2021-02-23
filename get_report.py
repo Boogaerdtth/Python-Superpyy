@@ -1,4 +1,6 @@
 import csv
+import os
+
 from rich.console import Console
 from rich.table import Table
 from datetime import date, timedelta, datetime
@@ -41,6 +43,11 @@ def get_report(args):
             for line in bought_report:
                 if args.file == "true":
                     new_csv_file.writerow(line)
+                    if args.pdf == "true":
+                        try:
+                            os.rename("report.csv", "report.pdf")
+                        except:
+                            None
                 else:
                     table_bought.add_row(
                         line[0], line[1], line[2], line[3], line[4], line[5]
