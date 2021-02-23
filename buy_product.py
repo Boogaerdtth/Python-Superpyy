@@ -17,20 +17,37 @@ def buy_product(args):
             # IF PRODUCT IS ALREADY IN STOCK
             if args.product == line[2]:
                 new_amount = int(args.amount) + int(line[4])
-                new_amount_arr_for_csvfile = [
-                    id_buy,
-                    dates.display_today,
-                    args.product,
-                    args.buy_price,
-                    new_amount,
-                    args.expiration_date,
-                ]
-                isAdded = True
-                writer.writerow(new_amount_arr_for_csvfile)
-                try:
-                    os.rename("bought_edit.csv", "bought.csv")
-                except:
-                    None
+
+                # IF THE ARGUMENT DATE HAS BEEN GIVEN, YOU WANT TO PURCHASE SOMETHING ON A
+                # DIFFERENT DATE THAN TODAY
+
+                # hieronder gaat het fout
+                if args.date == None:
+                    new_amount_arr_for_csvfile = [
+                        id_buy,
+                        dates.display_today,
+                        args.product,
+                        args.buy_price,
+                        new_amount,
+                        args.expiration_date,
+                    ]
+                    isAdded = True
+                    writer.writerow(new_amount_arr_for_csvfile)
+
+                elif args.date == str:
+                    new_amount_and_date_arr_for_csvfile = [
+                        id_buy,
+                        args.date,
+                        args.product,
+                        args.buy_price,
+                        new_amount,
+                        args.expiration_date,
+                    ]
+                    writer.writerow(new_amount_and_date_arr_for_csvfile)
+                    try:
+                        os.rename("bought_edit.csv", "bought.csv")
+                    except:
+                        None
             # IF PRODUCT IS NOT EQUAL TO LINE IN FILE. JUST COPY THE LINE
             else:
                 writer.writerow(line)
@@ -41,19 +58,43 @@ def buy_product(args):
 
         # IF PRODUCT IS NOT STOCK, ADD PRODUCT TO FILE
         if not isAdded:
-            new_arr_for_csvfile = [
-                id_buy,
-                dates.display_today,
-                args.product,
-                args.buy_price,
-                args.amount,
-                args.expiration_date,
-            ]
-            writer.writerow(new_arr_for_csvfile)
-            try:
-                os.rename("bought_edit.csv", "bought.csv")
-            except:
-                None
+            # hieronder gaat het fout
+            if args.date == None:
+                new_arr_for_csvfile = [
+                    id_buy,
+                    dates.display_today,
+                    args.product,
+                    args.buy_price,
+                    args.amount,
+                    args.expiration_date,
+                ]
+                writer.writerow(new_arr_for_csvfile)
+            elif args.date == str:
+                new_amount_and_date_arr_for_csvfile = [
+                    id_buy,
+                    args.date,
+                    args.product,
+                    args.buy_price,
+                    new_amount,
+                    args.expiration_date,
+                ]
+                writer.writerow(new_amount_and_date_arr_for_csvfile)
+                try:
+                    os.rename("bought_edit.csv", "bought.csv")
+                except:
+                    None
+
+
+# if args.date == "":
+#     new_amount_and_date_arr_for_csvfile = [
+#                     id_buy,
+#                     args.date,
+#                     args.product,
+#                     args.buy_price,
+#                     new_amount,
+#                     args.expiration_date,
+#                 ]
+#             writer.writerow(new_amount_and_date_arr_for_csvfile)
 
 
 if __name__ == "__main__":

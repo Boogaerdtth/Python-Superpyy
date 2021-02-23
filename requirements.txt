@@ -1,0 +1,6 @@
+python-dateutil==2.8.1
+rich==9.8.2
+prettytable==2.0.0
+
+
+#matplotlib==3.3.3

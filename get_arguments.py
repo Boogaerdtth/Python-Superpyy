@@ -17,6 +17,12 @@ def get_arguments():
         "-bpr", "--buy_price", type=float, help="provide bought price per item"
     )
     buy_parser.add_argument("-ex", "--expiration_date", type=str)
+    buy_parser.add_argument(
+        "-d",
+        "--date",
+        type=str,
+        help="provide date if your transaction is another day then today. Type -d and the date as dd-mm-yyyy. For example: buy -d 01-03-2021",
+    )
 
     # REPORT PARSER
     report_parser = subparser.add_parser("report", help="report command")

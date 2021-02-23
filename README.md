@@ -20,6 +20,10 @@ These are the things you can do with this tool:
 * * *
 
 ---
+
+### All dates in this tool have to be defined as dd-mm-yyyy!
+
+---
 ### Getting started
 ---
 First we can get the help menu:
