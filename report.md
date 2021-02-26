@@ -24,6 +24,9 @@ Before this assignment I didn't know what a .csv file was. I also didn't know th
 ### Table module
 This is where it got interesting. I couldn't find good documentation how to simply add nice looking tables in the CLI. Only after explanation from someone from the education, I finally managed to add some nice tables.
 
+### PDF module
+At first I thought that if you had a file with a .csv extension and changed the name to .pdf, that the file automatically would update to a PDF file. Never was I so wrong. So after feedback I had to look up documentarion how to do that. fortunatly I came across reportlab and his options. So now you can export your inventory to a brand new PDF file.
+
 ### Endless possibilities
 I also had a hard time with all the different usecases in which you have to account for in your application. Number of things could go wrong, so I had to think of a lot of possibilities what could go wrong.
 

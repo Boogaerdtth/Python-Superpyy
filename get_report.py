@@ -6,6 +6,7 @@ from rich.table import Table
 from datetime import date, timedelta, datetime
 
 from get_arguments import get_arguments
+from export_to_pdf import export_to_pdf
 import dates
 
 # GET REPORT
@@ -43,11 +44,11 @@ def get_report(args):
             for line in bought_report:
                 if args.file == "true":
                     new_csv_file.writerow(line)
-                    if args.pdf == "true":
-                        try:
-                            os.rename("report.csv", "report.pdf")
-                        except:
-                            None
+                elif args.pdf == "true":
+                    try:
+                        export_to_pdf()
+                    except:
+                        None
                 else:
                     table_bought.add_row(
                         line[0], line[1], line[2], line[3], line[4], line[5]
@@ -130,29 +131,34 @@ def get_report(args):
     with open("sold.csv", "r") as sold_file:
         sold_report = csv.reader(sold_file)
 
-        # GET REPORT WITH SOLD PRODUCTS
+        # # GET REPORT WITH SOLD PRODUCTS
         if args.subcommand == "sold":
             for line in sold_report:
-                if args.file == "true":
-                    new_csv_file.writerow(line)
-                else:
-                    table_sold.add_row(
-                        line[0], line[1], line[2], line[3], line[4], line[5]
-                    )
-            console.print(table_sold)
+                if (datetime.strptime(line[1], "%d-%m-%Y")) <= dates.display_today:
+
+                    if args.file == "true":
+                        new_csv_file.writerow(line)
+                    else:
+                        table_sold.add_row(
+                            line[0], line[1], line[2], line[3], line[4], line[5]
+                        )
+                console.print(table_sold)
+
 
         # GET REPORT WITH REVENUE
         if args.subcommand == "revenue" and args.time == "today":
             sum_revenue = 0
             for line in sold_report:
-                total_revenue_per_product = float(line[3]) * float(line[4])
-                sum_revenue += total_revenue_per_product
-                if args.file == "true":
-                    new_csv_file.writerow(sum_revenue)
+                if (datetime.strptime(line[1], "%d-%m-%Y")) == dates.display_today:
+
+                    total_revenue_per_product = float(line[3]) * float(line[4])
+                    sum_revenue += total_revenue_per_product
+                    if args.file == "true":
+                        new_csv_file.writerow(sum_revenue)
+                    else:
+                        None
                 else:
-                    None
-            else:
-                table_revenue.add_row(str(sum_revenue))
+                    table_revenue.add_row(str(sum_revenue))
             console.print(table_revenue)
 
         # GET REPORT WITH REVENUE ON SPECIFIC DATES

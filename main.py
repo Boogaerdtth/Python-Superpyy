@@ -11,8 +11,6 @@ from get_report import get_report
 from buy_product import buy_product
 from sell_product import sell_product
 
-# ik moet nog een grafiek maken
-
 
 def main(args):
     args = get_arguments()

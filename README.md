@@ -16,6 +16,7 @@ These are the things you can do with this tool:
 - Show your profit
 - Show your product with expiring dates
 - Export all the different reports to new .csv files
+- Export the inventory to a PDF file
 
 * * *
 

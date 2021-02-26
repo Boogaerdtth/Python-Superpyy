@@ -44,11 +44,11 @@ def buy_product(args):
                     ]
                     isAdded = True
 
-                writer.writerow(new_amount_and_date_arr_for_csvfile)
-                try:
-                    os.rename("bought_edit.csv", "bought.csv")
-                except:
-                    None
+                    writer.writerow(new_amount_and_date_arr_for_csvfile)
+                    try:
+                        os.rename("bought_edit.csv", "bought.csv")
+                    except:
+                        None
             # IF PRODUCT IS NOT EQUAL TO LINE IN FILE. JUST COPY THE LINE
             else:
                 writer.writerow(line)
@@ -70,6 +70,7 @@ def buy_product(args):
                 ]
                 writer.writerow(new_arr_for_csvfile)
             elif len(args.date) > 2:
+                new_amount = int(args.amount) + int(line[4])
                 new_amount_and_date_arr_for_csvfile = [
                     id_buy,
                     args.date,
@@ -83,18 +84,6 @@ def buy_product(args):
                     os.rename("bought_edit.csv", "bought.csv")
                 except:
                     None
-
-
-# if args.date == "":
-#     new_amount_and_date_arr_for_csvfile = [
-#                     id_buy,
-#                     args.date,
-#                     args.product,
-#                     args.buy_price,
-#                     new_amount,
-#                     args.expiration_date,
-#                 ]
-#             writer.writerow(new_amount_and_date_arr_for_csvfile)
 
 
 if __name__ == "__main__":

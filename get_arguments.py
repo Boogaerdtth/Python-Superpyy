@@ -14,9 +14,17 @@ def get_arguments():
         "-a", "--amount", type=int, help="how many items did you buy"
     )
     buy_parser.add_argument(
-        "-bpr", "--buy_price", type=float, help="provide bought price per item"
+        "-bpr",
+        "--buy_price",
+        type=float,
+        help="provide bought price per item. example: when amount is 1.25 euro: -a 1.25",
     )
-    buy_parser.add_argument("-ex", "--expiration_date", type=str)
+    buy_parser.add_argument(
+        "-ex",
+        "--expiration_date",
+        type=str,
+        help="add the expiration date as dd-mm-yyyy. ",
+    )
     buy_parser.add_argument(
         "-d",
         "--date",
@@ -29,7 +37,7 @@ def get_arguments():
     report_parser.add_argument(
         "subcommand",
         choices=["inventory", "revenue", "profit", "sold", "exdates"],
-        help="Choose which report you want to see",
+        help="Choose which report you want to see. The sold function displays the total sold products",
     )
     report_parser.add_argument(
         "time",
@@ -43,10 +51,13 @@ def get_arguments():
         help="provide date for report. First type 'date' from the time argument. then type -d and the date as dd-mm-yyyy. For example: report inventory date -d 01-03-2021",
     )
     report_parser.add_argument(
-        "-f", "--file", type=str, help="export report to new file. example: -f true"
+        "-f", "--file", type=str, help="export report to new csv file. example: -f true"
     )
     report_parser.add_argument(
-        "-pdf", "--pdf", type=str, help="export report to new file. example: -pdf true"
+        "-pdf",
+        "--pdf",
+        type=str,
+        help="export report to new pdf file. example: -pdf true",
     )
 
     # SELL PARSER
@@ -56,7 +67,10 @@ def get_arguments():
     )
     sell_parser.add_argument("-a", "--amount", type=int, help="amount of product")
     sell_parser.add_argument(
-        "-spr", "--sell_price", type=float, help="provide the price of the product"
+        "-spr",
+        "--sell_price",
+        type=float,
+        help="provide the price of the product. For example: 2.25",
     )
 
     args = parser.parse_args()
